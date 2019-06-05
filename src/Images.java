@@ -27,8 +27,8 @@ public class Images {
     }
 
     public static void saveImage(int[][] imageArray, String path) throws IOException {
-        BufferedImage bufferedImage = new BufferedImage(imageArray.length, imageArray[0].length,
-                BufferedImage.TYPE_BYTE_GRAY);
+        BufferedImage bufferedImage =
+                new BufferedImage(imageArray.length, imageArray[0].length, BufferedImage.TYPE_BYTE_GRAY);
         WritableRaster writableRaster = bufferedImage.getRaster();
 
         for (int i = 0; i < bufferedImage.getWidth(); i++) {
