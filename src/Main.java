@@ -1,6 +1,13 @@
+import java.io.IOException;
+
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        try {
+            int[][] imageArray = Images.loadImage("images/boat.png");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
+
 }
