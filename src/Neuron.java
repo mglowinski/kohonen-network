@@ -27,9 +27,11 @@ public class Neuron {
 
     public double countOutput() {
         double sum = 0;
+
         for (int i = 0; i < inputs.length; i++) {
             sum += Math.pow(inputs[i] - weights[i], 2);
         }
+
         return Math.sqrt(sum);
     }
 
