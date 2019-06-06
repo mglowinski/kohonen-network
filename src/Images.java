@@ -19,7 +19,7 @@ public class Images {
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                imageArray[i][j] = raster.getSample(i, j,0);
+                imageArray[i][j] = raster.getSample(i, j, 0);
             }
         }
 
@@ -32,7 +32,7 @@ public class Images {
         WritableRaster writableRaster = bufferedImage.getRaster();
 
         for (int i = 0; i < bufferedImage.getWidth(); i++) {
-            for (int j = 0; i < bufferedImage.getHeight(); j++) {
+            for (int j = 0; j < bufferedImage.getHeight(); j++) {
                 writableRaster.setSample(i, j, 0, imageArray[i][j]);
             }
         }

@@ -15,20 +15,13 @@ public class KohonenAlgorithm {
         initializeNeurons(numberOfNeurons);
     }
 
-    private void initializeNeurons(int numberOfNeurons) {
-        neurons = new Neuron[numberOfNeurons];
-        for (int i = 0; i < numberOfNeurons; i++) {
-            neurons[i] = new Neuron(sizeOfFrame * sizeOfFrame);
-        }
-    }
-
     public void trainNetwork(int trainingEpochAmount, int[][] imageArray) {
         displayNeuron();
 
         for (int i = 0; i < trainingEpochAmount; i++) {
-            int[] indexesOfBeginningOfFrame =
+            int[] beginningOfFrameIndex =
                     selectRandomIndexesBeginningOfFrame(imageArray.length, sizeOfFrame);
-            int[] frame = getFrame(indexesOfBeginningOfFrame, imageArray, sizeOfFrame);
+            int[] frame = getFrame(beginningOfFrameIndex, imageArray, sizeOfFrame);
             double[] normalizedFrame = normalizeFrame(frame);
             Neuron neuron = chooseBestNeuron(normalizedFrame);
             changeWeightsOfBestNeuron(neuron, normalizedFrame);
@@ -36,6 +29,94 @@ public class KohonenAlgorithm {
 
         System.out.println();
         displayNeuron();
+    }
+
+    public CompressionResult compressImage(int[][] imageArray) {
+        int totalFramesCount = (imageArray.length * imageArray[0].length) /
+                (sizeOfFrame * sizeOfFrame);
+        int framesInOneRowCount = imageArray.length / sizeOfFrame;
+
+        CompressionResult compressionResult =
+                new CompressionResult(totalFramesCount);
+
+        int counter = 0;
+        for (int i = 0; i < framesInOneRowCount; i++) {
+            for (int j = 0; j < framesInOneRowCount; j++) {
+                int[] beginningOfFrameIndex = {sizeOfFrame * i, sizeOfFrame * j};
+                int[] frame = getFrame(beginningOfFrameIndex, imageArray, sizeOfFrame);
+
+                double[] normalizedFrame = normalizeFrame(frame);
+                Neuron bestNeuron = chooseBestNeuron(normalizedFrame);
+
+                compressionResult.getBestNeurons()[counter] = bestNeuron;
+                compressionResult.getLengths()[counter] = getSqrtOfSumOfVector(frame);
+
+                counter++;
+            }
+        }
+
+        return compressionResult;
+    }
+
+    public int[][] decompressImage(CompressionResult compressionResult) {
+        int sizeOfImage = (int) Math.sqrt(compressionResult.getBestNeurons().length *
+                (sizeOfFrame * sizeOfFrame));
+
+        int[][] decompressionResult = new int[sizeOfImage][sizeOfImage];
+        int framesInOneRow = decompressionResult.length / sizeOfFrame;
+
+        int counter = 0;
+        for (int i = 0; i < framesInOneRow; i++) {
+            for (int j = 0; j < framesInOneRow; j++) {
+                double[] weights = compressionResult.getBestNeurons()[counter].getWeights();
+                int[] decompressedFrame = decompressFrame(weights, compressionResult.getLengths()[counter]);
+                putFrame(decompressionResult, decompressedFrame, i * sizeOfFrame, j * sizeOfFrame, sizeOfFrame);
+                counter++;
+            }
+        }
+
+        return decompressionResult;
+    }
+
+    private int[] decompressFrame(double[] weights, double length) {
+        double[] decompressedFrame = new double[weights.length];
+
+        for (int i = 0; i < weights.length; i++) {
+            decompressedFrame[i] = weights[i] * length;
+        }
+
+        return convertFrameToInt(decompressedFrame);
+    }
+
+    private int[] convertFrameToInt(double[] frame) {
+        int[] intFame = new int[frame.length];
+
+        for (int i = 0; i < frame.length; i++) {
+            intFame[i] = (int) frame[i];
+        }
+
+        return intFame;
+    }
+
+    private void putFrame(int[][] decompressionResult,
+                          int[] decompressedFrame,
+                          int i,
+                          int j,
+                          int sizeOfFrame) {
+        int counter = 0;
+        for (int k = 0; k < sizeOfFrame; k++) {
+            for (int l = 0; l < sizeOfFrame; l++) {
+                decompressionResult[i + k][j + l] = decompressedFrame[counter];
+                counter++;
+            }
+        }
+    }
+
+    private void initializeNeurons(int numberOfNeurons) {
+        neurons = new Neuron[numberOfNeurons];
+        for (int i = 0; i < numberOfNeurons; i++) {
+            neurons[i] = new Neuron(sizeOfFrame * sizeOfFrame);
+        }
     }
 
     private void displayNeuron() {
@@ -46,19 +127,21 @@ public class KohonenAlgorithm {
 
     private int[] selectRandomIndexesBeginningOfFrame(int imageArraySize, int sizeOfFrame) {
         int[] indexes = new int[2];
+
         indexes[0] = random.nextInt(imageArraySize - sizeOfFrame);
         indexes[1] = random.nextInt(imageArraySize - sizeOfFrame);
+
         return indexes;
     }
 
-    private int[] getFrame(int[] indexesOfBeginningOfFrame, int[][] imageArray, int sizeOfFrame) {
+    private int[] getFrame(int[] beginningOfFrameIndex, int[][] imageArray, int sizeOfFrame) {
         int[] frame = new int[sizeOfFrame * sizeOfFrame];
         int counter = 0;
 
         for (int i = 0; i < sizeOfFrame; i++) {
             for (int j = 0; j < sizeOfFrame; j++) {
-                frame[counter] = imageArray[indexesOfBeginningOfFrame[0] + i]
-                        [indexesOfBeginningOfFrame[1] + j];
+                frame[counter] = imageArray[beginningOfFrameIndex[0] + i]
+                        [beginningOfFrameIndex[1] + j];
                 counter++;
             }
         }
