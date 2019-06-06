@@ -53,8 +53,7 @@ public class Main {
         double b1 = numberOfPixels * 8;
         int pixelsPerFrame = SIZE_OF_FRAME * SIZE_OF_FRAME;
         int numberOfFrames = numberOfPixels / pixelsPerFrame;
-        double b2 = numberOfFrames * (Math.ceil(log2(NUMBER_OF_NEURONS))
-                + BITS_PER_VALUE)
+        double b2 = numberOfFrames * (Math.ceil(log2(NUMBER_OF_NEURONS)) + BITS_PER_VALUE)
                 + (NUMBER_OF_NEURONS * pixelsPerFrame * BITS_PER_VALUE);
         double b = b2 / b1;
         return (1 - b) * 100;
