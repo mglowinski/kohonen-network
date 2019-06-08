@@ -2,8 +2,8 @@ import java.io.IOException;
 
 public class Main {
 
-    private static final int SIZE_OF_FRAME = 2;
-    private static final int NUMBER_OF_NEURONS = 10;
+    private static final int SIZE_OF_FRAME = 4;
+    private static final int NUMBER_OF_NEURONS = 20;
     private static final double LEARNING_STEP = 0.01;
     private static final int BITS_PER_VALUE = 8;
 
@@ -23,7 +23,7 @@ public class Main {
             double PSNR = computePSNR(imageArray, decompressedImage);
             System.out.println("PSNR: " + PSNR + " dB");
             double compressionFactor = computeCompressionFactor(imageArray);
-            System.out.println("Compression factor: " + compressionFactor);
+            System.out.println("Compression factor: " + round(compressionFactor) + "%");
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -61,6 +61,13 @@ public class Main {
 
     private static double log2(int n) {
         return (Math.log(n) / Math.log(2));
+    }
+
+    private static double round(double value) {
+        long factor = (long) Math.pow(10, 2);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 
 }
