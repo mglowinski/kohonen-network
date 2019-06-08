@@ -15,16 +15,20 @@ public class KohonenAlgorithm {
         initializeNeurons(numberOfNeurons);
     }
 
-    public void trainNetwork(int trainingEpochAmount, int[][] imageArray) {
+    public void trainNetwork(int trainingEpochAmount,
+                             int numberOfTrainingFrames,
+                             int[][] imageArray) {
         displayNeuron();
 
         for (int i = 0; i < trainingEpochAmount; i++) {
-            int[] beginningOfFrameIndex =
-                    selectRandomIndexesBeginningOfFrame(imageArray.length, sizeOfFrame);
-            int[] frame = getFrame(beginningOfFrameIndex, imageArray, sizeOfFrame);
-            double[] normalizedFrame = normalizeFrame(frame);
-            Neuron neuron = chooseBestNeuron(normalizedFrame);
-            changeWeightsOfBestNeuron(neuron, normalizedFrame);
+            for (int j = 0; j < numberOfTrainingFrames; j++) {
+                int[] beginningOfFrameIndex =
+                        selectRandomIndexesBeginningOfFrame(imageArray.length, sizeOfFrame);
+                int[] frame = getFrame(beginningOfFrameIndex, imageArray, sizeOfFrame);
+                double[] normalizedFrame = normalizeFrame(frame);
+                Neuron neuron = chooseBestNeuron(normalizedFrame);
+                changeWeightsOfBestNeuron(neuron, normalizedFrame);
+            }
         }
 
         System.out.println();
