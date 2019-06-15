@@ -2,16 +2,16 @@ import java.io.IOException;
 
 public class Main {
 
-    private static final int SIZE_OF_FRAME = 2;
-    private static final int NUMBER_OF_TRAINING_FRAMES = 20;
-    private static final int NUMBER_OF_NEURONS = 5;
+    private static final int SIZE_OF_FRAME = 4;
+    private static final int NUMBER_OF_TRAINING_FRAMES = 4;
+    private static final int NUMBER_OF_NEURONS = 10;
     private static final double LEARNING_STEP = 0.01;
     private static final int BITS_PER_VALUE = 8;
-    private static final int NUMBER_OF_TRAINING_EPOCHS = 2000;
+    private static final int NUMBER_OF_TRAINING_EPOCHS = 500;
 
     public static void main(String[] args) {
         try {
-            int[][] imageArray = Images.loadImage("images/boat.png");
+            int[][] imageArray = Images.loadImage("images/lena.png");
             KohonenAlgorithm network =
                     new KohonenAlgorithm(SIZE_OF_FRAME, NUMBER_OF_NEURONS, LEARNING_STEP);
 

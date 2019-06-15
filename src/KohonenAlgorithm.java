@@ -53,7 +53,7 @@ public class KohonenAlgorithm {
                 Neuron bestNeuron = chooseBestNeuron(normalizedFrame);
 
                 compressionResult.getBestNeurons()[counter] = bestNeuron;
-                compressionResult.getLengths()[counter] = getSqrtOfSumOfVector(frame);
+                compressionResult.getLengths()[counter] = getSqrtOfSumOfSquaresVector(frame);
 
                 counter++;
             }
@@ -154,7 +154,7 @@ public class KohonenAlgorithm {
     }
 
     private double[] normalizeFrame(int[] frame) {
-        double sqrtOfSumOfVector = getSqrtOfSumOfVector(frame);
+        double sqrtOfSumOfVector = getSqrtOfSumOfSquaresVector(frame);
 
         double[] normalizedFrame = new double[frame.length];
 
@@ -169,7 +169,7 @@ public class KohonenAlgorithm {
         return normalizedFrame;
     }
 
-    private double getSqrtOfSumOfVector(int[] frame) {
+    private double getSqrtOfSumOfSquaresVector(int[] frame) {
         double sum = 0;
 
         for (int pixel : frame) {
@@ -179,12 +179,12 @@ public class KohonenAlgorithm {
         return Math.sqrt(sum);
     }
 
-    private Neuron chooseBestNeuron(double[] frame) {
+    private Neuron chooseBestNeuron(double[] normalizedFrame) {
         int bestNeuronIndex = -1;
         double closestDistance = Double.MAX_VALUE;
 
         for (int i = 0; i < neurons.length; i++) {
-            neurons[i].setInputs(frame);
+            neurons[i].setInputs(normalizedFrame);
             double distance = neurons[i].countOutput();
             if (distance < closestDistance) {
                 closestDistance = distance;
@@ -195,11 +195,11 @@ public class KohonenAlgorithm {
         return neurons[bestNeuronIndex];
     }
 
-    private void changeWeightsOfBestNeuron(Neuron neuron, double[] frame) {
+    private void changeWeightsOfBestNeuron(Neuron neuron, double[] normalizedFrame) {
         double[] weights = neuron.getWeights();
 
         for (int i = 0; i < weights.length; i++) {
-            weights[i] = weights[i] + learningStep * (frame[i] - weights[i]);
+            weights[i] = weights[i] + learningStep * (normalizedFrame[i] - weights[i]);
         }
 
         double[] normalizedWeights = normalizeWeights(weights);
@@ -207,7 +207,7 @@ public class KohonenAlgorithm {
     }
 
     private double[] normalizeWeights(double[] weights) {
-        double sqrtOfSumOfVector = getSqrtOfSumOfVector(weights);
+        double sqrtOfSumOfVector = getSqrtOfSumOfSquaresVector(weights);
 
         double[] normalizedWeights = new double[weights.length];
 
@@ -222,11 +222,11 @@ public class KohonenAlgorithm {
         return normalizedWeights;
     }
 
-    private double getSqrtOfSumOfVector(double[] frame) {
+    private double getSqrtOfSumOfSquaresVector(double[] weights) {
         double sum = 0;
 
-        for (double aFrame : frame) {
-            sum += Math.pow((aFrame), 2);
+        for (double weight : weights) {
+            sum += Math.pow((weight), 2);
         }
 
         return Math.sqrt(sum);
